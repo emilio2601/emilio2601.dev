@@ -23,17 +23,17 @@ My first instinct was to use a PaaS platform — we were in the process of movin
 
 To be fair, I could have stuck with Heroku; after all I was fairly familiar with it given my experience at work. But at the same time, we were not satisfied with pricing and stability, so I decided to look for alternatives.
 
-First, I tried [Render](https://render.com). It was pretty easy to get going, but as soon as I started to ingest data, I kept on running into RAM limits.
+First, I tried [Render](https://render.com). It was pretty easy to get my app up and running on their basic plan, but as soon as I tried to load my initial dataset the import process repeatedly failed, hitting memory limits.
 
-Naturally, the solution was to scale up, but I balked at the idea of paying more. I was already spending $27/month for a mere 512 MB of RAM for my web server and 1 GB for Postgres. For that price, I could barely import a fraction of my data, making it a very expensive and inadequate solution for my needs.
+The obvious path forward was to upgrade, but I was already questioning the value. For $27/month, my app had just 512MB of RAM, with another 1GB for the database. This wasn't nearly enough, yet the dataset itself was tiny: a year's worth of data (~400,000 rows) is only about 150MB in an uncompressed CSV. It seemed absurd to pay more for a platform that couldn't handle such a small initial load, so I decided to look elsewhere.
 
-I realized that the PaaS platforms were not a good fit for my needs. I needed a solution that was more flexible and cost-effective, so I started to look into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/), or [Hetzner](https://www.hetzner.com/). The trade-off was that I would have to manage the server myself, but I was willing to do that.
+I realized that the PaaS platforms were not a good fit for a hobby project like mine. I needed a solution that was more flexible and cost-effective, so I started to look into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/), or [Hetzner](https://www.hetzner.com/). The trade-off was that I would have to manage the server myself, but this was something I was willing to do.
 
 After doing some research and shopping around, I ended up with a [CAX21](https://www.hetzner.com/cloud) from Hetzner. I'd get 4 vCPUs, 8GB of RAM and 80GB of NVMe storage for €6.49/month, which is a pretty good deal, way better than what I was paying for a PaaS platform.
 
-The server was an Ampere Altra arm64 machine. I decided to go with it versus a similarly priced Intel machine after looking at benchmarks online and seeing that the Altra was somewhat faster. When we migrated our main database at work from Heroku to AWS we went with their ARM machines as well and we'd been happy with the performance and the cost savings, so I figured it was a good choice. My local development machine has an Apple M4 ARM chip, which ensured that all libraries I used in this project had good support for this instruction set.
+The server was an Ampere Altra arm64 machine. I decided to go with it versus a similarly priced Intel machine after looking at benchmarks online and seeing that the Altra was somewhat faster. When we migrated our main database at work from Heroku to AWS we went with their ARM machines as well and we'd been happy with the performance and the cost savings, so I figured it was a good choice. My local development machine has an Apple M4 ARM chip, so I was confident that all of this project's dependencies had support for this instruction set.
 
-While configuring the server, they mentioned that I could save €0.50/month by not having a primary IPv4 address. It seemed like a no-brainer: besides the small discount, it felt like a forward-thinking choice in the face of [IPv4 exhaustion](https://en.wikipedia.org/wiki/IPv4_address_exhaustion). 
+While configuring the server, Hetzner offered a €0.50/month rebate if I didn't want a primary IPv4 address. It seemed like a no-brainer: besides the small discount, it felt like a forward-thinking choice in the face of [IPv4 exhaustion](https://en.wikipedia.org/wiki/IPv4_address_exhaustion). 
 
 I brushed aside any worries about compatibility. After all, IPv6 has been around for decades. Surely support would be nearly universal by now?
 
@@ -57,11 +57,11 @@ ping: cannot resolve 2001:db8:1234:5678::1: Unknown host
 
 I was so confused. I wondered if my network didn't support IPv6. I tried to ping a few other addresses in the block, but they all failed.
 
-A check on [test-ipv6.com](https://test-ipv6.com/) showed that my home network lacked IPv6 support, which was surprising given my ISP (Spectrum in NYC) is supposedly IPv6-capable.
+A check on [test-ipv6.com](https://test-ipv6.com/) showed that my home network lacked IPv6 support, which was surprising given my ISP (Spectrum in New York City) is supposedly IPv6-capable.
 
 The culprit, it turned out, was an embarrassingly simple toggle buried in my Nest Wifi Pro's settings. I'm not sure if it was the default or a past misconfiguration, but flipping it on, restarting the router and re-running the test granted me a perfect 10/10. With the local issue resolved, I moved on.
 
-Even with local IPv6 connectivity confirmed, `ping` still failed to reach the server. The problem wasn't the network, but the tool. On many systems, `ping` and `ping6` are separate commands. The former defaults to or is exclusively for IPv4, while `ping6` must be used to send ICMPv6 echo requests. This separation is a historical artifact from the internet's gradual transition, ensuring that older, IPv4-centric tools and scripts remained compatible.
+Even with local IPv6 connectivity confirmed, `ping` still failed to reach the server. It turned out the problem wasn't the network, but the tool. On many systems, `ping` and `ping6` are separate commands. The former defaults to or is exclusively for IPv4, while `ping6` must be used to send ICMPv6 echo requests. This separation is a historical artifact from the internet's gradual transition, ensuring that older, IPv4-centric tools and scripts remained compatible.
 
 ```bash
 $ ping6 2001:db8:1234:5678::1
@@ -94,9 +94,9 @@ Cloning into 'postgres'...
 fatal: unable to access 'https://github.com/dokku/dokku-postgres.git/': Failed to connect to github.com port 443 after 2 ms: Couldn't connect to server
 ```
 
-I was confused. I verified I had a working internet connection. I pinged `github.com` from my local machine and it was working. I pinged it from the server and it was not.
+I was confused. I verified I had a working internet connection. I successfully pinged `github.com` from my local machine, so I knew their service was up. However, when I tried to reach their servers from my VPS, I couldn't connect at all.
 
-It turns out GitHub does not support IPv6 at all. There's a [discussion thread](https://github.com/orgs/community/discussions/10539) with hundreds of replies in the GitHub Community forum, but so far no official announcement. There's even a website called [isgithubipv6.live](https://isgithubipv6.live/) that you can sign up for to get notified when they enable it.
+It turns out that as of August 2025, GitHub does not support IPv6. There's a [discussion thread](https://github.com/orgs/community/discussions/10539) with hundreds of replies in the GitHub Community forum, but so far no official announcement. There's even a tracker website called [isgithubipv6.live](https://isgithubipv6.live/) with a signup form to get notified when they enable it.
 
 I wasn't gonna wait for that to happen, and luckily I found a workaround. There's a proxy called [gh-v6.com](https://gh-v6.com/) that allows you to access repositories over IPv6. And Dokku has a way to manually specify a URL for plugin installations.
 
@@ -105,7 +105,7 @@ $ sudo dokku plugin:install https://gh-v6.com/dokku/dokku-postgres/archive/refs/
 -----> Installing plugin dokku-postgres (1.44.0)
 ```
 
-Note that this proxy only works for release assets, so I had to specify the version of the plugin I wanted to install. I also had to specify the name of the plugin with the `--name` flag, otherwise Dokku would assume my plugin was called `1.44.0.tar.gz`. 
+Note that this proxy only works for release assets, so I had to specify the URL for the specific version of the plugin I wanted to install. I also had to specify the name of the plugin with the `--name` flag, otherwise Dokku would assume my plugin was called `1.44.0.tar.gz`. 
 
 I was able to install the plugin and create an app and a database, and link them together.
 
@@ -188,6 +188,6 @@ The key challenges I faced were:
 
 Despite these hurdles, I now have a cost-effective, high-performance, and future-proof platform for my projects. If you're considering making the jump, I'd say go for it. The challenges are surmountable, and by navigating them, you'll be a little bit ahead of the curve.
 
-One final thought worth mentioning is that I proxy this site through Cloudflare. This provides a significant advantage: Cloudflare's network makes my site accessible to users on older, IPv4-only networks by translating their requests to IPv6 before they reach my server.
+One final thought worth mentioning is that I proxy this site through Cloudflare. Their network makes my site accessible to users on older, IPv4-only networks by translating their requests to IPv6 before they reach my server.
 
-A fair question might be: if Cloudflare provides IPv4 access anyway, was the effort worthwhile? The answer is a firm yes. Beyond the initial cost savings, this setup simplifies my server's configuration and reduces its attack surface — there is no public IPv4 address to manage, firewall, or secure. Cloudflare handles the messy reality of the internet's transition period, while my backend infrastructure remains lean, modern, and focused on a single protocol. It's the best of both worlds: universal accessibility for all users, with a simpler and more secure IPv6-only origin.
+A fair question might be: if Cloudflare provides IPv4 access anyway, was the effort worthwhile? I would say yes. Beyond the initial cost savings, this setup simplifies my server's configuration and reduces its attack surface — there is no public IPv4 address to manage, firewall, or secure. It's the best of both worlds: universal access for all users, with a simpler and more secure IPv6-only origin.
