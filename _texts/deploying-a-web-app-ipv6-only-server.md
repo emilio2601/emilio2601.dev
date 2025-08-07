@@ -25,21 +25,19 @@ To be fair, I could have stuck with Heroku; after all I was fairly familiar with
 
 First, I tried [Render](https://render.com). It was pretty easy to get going, but as soon as I started to ingest data, I kept on running into RAM limits.
 
-Naturally, the solution was to scale up. But I was not willing to pay for that. I was paying $27/month for 512MB of RAM in my web server and 1GB of RAM in Postgres, which was not enough for my needs and is frankly expensive considering I could barely import a fraction of the data I needed.
+Naturally, the solution was to scale up, but I balked at the idea of paying more. I was already spending $27/month for a mere 512 MB of RAM for my web server and 1 GB for Postgres. For that price, I could barely import a fraction of my data, making it a very expensive and inadequate solution for my needs.
 
-I realized that the PaaS platforms were not a good fit for my needs. I needed something that was more flexible and cost-effective.
+I realized that the PaaS platforms were not a good fit for my needs. I needed a solution that was more flexible and cost-effective, so I started to look into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/), or [Hetzner](https://www.hetzner.com/). The trade-off was that I would have to manage the server myself, but I was willing to do that.
 
-I started to look into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/) or [Hetzner](https://www.hetzner.com/). The trade-off was that I would have to manage the server myself, but I was willing to do that.
+After doing some research and shopping around, I ended up with a [CAX21](https://www.hetzner.com/cloud) from Hetzner. I'd get 4 vCPUs, 8GB of RAM and 80GB of NVMe storage for €6.49/month, which is a pretty good deal, way better than what I was paying for a PaaS platform.
 
-I decided to get a [CAX21](https://www.hetzner.com/cloud) from Hetzner. I'd get 4 vCPUs, 8GB of RAM and 80GB of NVMe storage for €6.49/month, which is a pretty good deal, way better than what I was paying for a PaaS platform.
+The server was an Ampere Altra arm64 machine. I decided to go with it versus a similarly priced Intel machine after looking at benchmarks online and seeing that the Altra was somewhat faster. When we migrated our main database at work from Heroku to AWS we went with their ARM machines as well and we'd been happy with the performance and the cost savings, so I figured it was a good choice. My local development machine has an Apple M4 ARM chip, which ensured that all libraries I used in this project had good support for this instruction set.
 
-The server was an Ampere Altra arm64 machine. I decided to go with it versus a similarly priced Intel machine after looking at benchmarks online and seeing that the Altra was a bit faster. When we migrated our main database at work from Heroku to AWS we went with their ARM machines as well and we'd been happy with the results and the cost savings, so I figured it was a good choice.
+While configuring the server, they mentioned that I could save €0.50/month by not having a primary IPv4 address. It seemed like a no-brainer: besides the small discount, it felt like a forward-thinking choice in the face of [IPv4 exhaustion](https://en.wikipedia.org/wiki/IPv4_address_exhaustion). 
 
-While configuring the server, they mentioned that I could save €0.50/month by not having a primary IPv4 address. I figured this would be a good opportunity to save money — plus, given the ongoing [IPv4 exhaustion](https://en.wikipedia.org/wiki/IPv4_address_exhaustion), it's a good idea to start migrating over. 
+I brushed aside any worries about compatibility. After all, IPv6 has been around for decades. Surely support would be nearly universal by now?
 
-And while I was worried about compatibility issues, I thought that given how long IPv6 has been around, there would be good support for it. 
-
-That ended up not being exactly true. Here's a summary of what happened
+Not exactly.
 <br />
 <br />
 
@@ -59,11 +57,11 @@ ping: cannot resolve 2001:db8:1234:5678::1: Unknown host
 
 I was so confused. I wondered if my network didn't support IPv6. I tried to ping a few other addresses in the block, but they all failed.
 
-I found this [IPv6 test page](https://test-ipv6.com/) that I thought would be a good way to test if my network supported IPv6. I ran the test and it said that my network did not support it. 
+A check on [test-ipv6.com](https://test-ipv6.com/) showed that my home network lacked IPv6 support, which was surprising given my ISP (Spectrum in NYC) is supposedly IPv6-capable.
 
-I was flabbergasted. No IPv6 support in 2025? I started searching and found out that my ISP (Spectrum) is supposed to support it. I then went on my router's settings (Nest Wifi Pro) and found out that it was disabled. I'm not sure if that was the default or I had misguidedly turned it off at some point but I was happy to find the issue. I turned it back on and ran the test again. This time I got a 10/10 score, so I was happy.
+The culprit, it turned out, was an embarrassingly simple toggle buried in my Nest Wifi Pro's settings. I'm not sure if it was the default or a past misconfiguration, but flipping it on, restarting the router and re-running the test granted me a perfect 10/10. With the local issue resolved, I moved on.
 
-I then tried to ping the server again. Still no luck. After doing a bit more digging, turns out there's a separate `ping6` command that I was not using.
+Even with local IPv6 connectivity confirmed, `ping` still failed to reach the server. The problem wasn't the network, but the tool. On many systems, `ping` and `ping6` are separate commands. The former defaults to or is exclusively for IPv4, while `ping6` must be used to send ICMPv6 echo requests. This separation is a historical artifact from the internet's gradual transition, ensuring that older, IPv4-centric tools and scripts remained compatible.
 
 ```bash
 $ ping6 2001:db8:1234:5678::1
@@ -73,7 +71,6 @@ PING6(56=40+8+8 bytes) 2001:db8:f00d:face::1 --> 2001:db8:1234:5678::1
 
 Finally, success! I could reach the server. Now that I had sorted out the connectivity issues, it was time to deploy the app.
 
-<br />
 <br />
 
 ## Deploying the app
@@ -178,7 +175,6 @@ $ dokku letsencrypt:enable my-app
 I was done! I was able to access my app over HTTPS, both from my local machine and from the internet.
 
 <br />
-<br />
 
 ## Conclusion
 
@@ -189,4 +185,9 @@ The key challenges I faced were:
 2.  Using a proxy to pull Dokku plugins from GitHub.
 3.  Manually enabling IPv6 in Docker's configuration.
 
+
 Despite these hurdles, I now have a cost-effective, high-performance, and future-proof platform for my projects. If you're considering making the jump, I'd say go for it. The challenges are surmountable, and by navigating them, you'll be a little bit ahead of the curve.
+
+One final thought worth mentioning is that I proxy this site through Cloudflare. This provides a significant advantage: Cloudflare's network makes my site accessible to users on older, IPv4-only networks by translating their requests to IPv6 before they reach my server.
+
+A fair question might be: if Cloudflare provides IPv4 access anyway, was the effort worthwhile? The answer is a firm yes. Beyond the initial cost savings, this setup simplifies my server's configuration and reduces its attack surface — there is no public IPv4 address to manage, firewall, or secure. Cloudflare handles the messy reality of the internet's transition period, while my backend infrastructure remains lean, modern, and focused on a single protocol. It's the best of both worlds: universal accessibility for all users, with a simpler and more secure IPv6-only origin.
