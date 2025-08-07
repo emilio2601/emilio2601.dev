@@ -73,16 +73,18 @@ Finally, success! I could reach the server. Now that I had sorted out the connec
 
 ## Deploying the app
 
-I decided to use [Dokku](https://dokku.com/) for this. It's a lightweight self-hosted open source PaaS that runs on top of Docker and it's pretty easy to get started with.
+My decision to use a VPS solved the cost and resource problem, but it introduced a new one: developer experience. I didn't want to trade the convenience of a managed platform for a world of manual configuration. I had no desire to set up Nginx, manage system processes, and script deployments by hand.
 
-I followed the [Dokku documentation](https://dokku.com/docs/getting-started/installation/) to install it. 
+This is the exact problem a self-hosted PaaS is designed to solve. After some research, I chose [Dokku](https://dokku.com/). It's a lightweight, open-source project that runs on my server and automates all the tedious parts of deployment. It handles everything from building the application inside a container to configuring the web server and managing environment variables. Its plugin system even lets me provision services like a Postgres database or an SSL certificate with a single command, effectively giving me a private, powerful, and cost-effective app platform on hardware I control.
+
+Their [documentation](https://dokku.com/docs/getting-started/installation/) was pretty easy to follow, and I was able to install it in a few minutes.
 
 ```bash
 $ wget -NP . https://dokku.com/install/v0.35.20/bootstrap.sh
 $ sudo DOKKU_TAG=v0.35.20 bash bootstrap.sh
 ```
 
-I installed Dokku, set up a domain, and added my SSH key pretty easily. Setting up the domain meant pointing an `AAAA` record to my server's IPv6 address, as a traditional `A` record for IPv4 wouldn't work on an IPv6-only server. My first roadblock came when I tried to provision a Postgres database. Postgres is not supported out of the box, but there's a plugin for that.
+After installing the main package, I added my SSH key and set up my domain. This meant pointing an `AAAA` record to my server's IPv6 address, as a traditional `A` record for IPv4 wouldn't work on an IPv6-only server. My first issue came when I tried to install their Postgres plugin.
 
 ```bash
 $ sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
@@ -94,7 +96,7 @@ fatal: unable to access 'https://github.com/dokku/dokku-postgres.git/': Failed t
 
 I was confused. I verified I had a working internet connection. I successfully pinged `github.com` from my local machine, so I knew their service was up. However, when I tried to reach their servers from my VPS, I couldn't connect at all.
 
-It turns out that as of August 2025, GitHub does not support IPv6. There's a [discussion thread](https://github.com/orgs/community/discussions/10539) with hundreds of replies in the GitHub Community forum, but so far no official announcement. There's even a tracker website called [isgithubipv6.live](https://isgithubipv6.live/) with a signup form to get notified when they enable it.
+It turns out that as of August 2025, GitHub's IPv6 support is incomplete. While some services like GitHub Pages are accessible over IPv6, core functionality including the website itself and `git` operations remains IPv4-only. There's a [discussion thread](https://github.com/orgs/community/discussions/10539) with hundreds of replies in the GitHub Community forum, but so far no official announcement. There's even a tracker website called [isgithubipv6.live](https://isgithubipv6.live/) with a signup form to get notified when they enable it.
 
 I wasn't gonna wait for that to happen, and luckily I found a workaround. There's a proxy called [gh-v6.com](https://gh-v6.com/) that allows you to access repositories over IPv6. And Dokku has a way to manually specify a URL for plugin installations.
 
@@ -129,15 +131,17 @@ $ git remote add dokku dokku@example.com:my-app
 $ git push dokku main
 ```
 
-Here, `example.com` should be the domain you pointed to your server's IPv6 address with an AAAA record.
+Here, `example.com` refers to the domain that points to the server's IPv6 address with an `AAAA` record.
 
-However, this is where I hit another roadblock. I was not able to build the app. The build process stalled halfway through, with the following error when downloading a gem:
+However, this is where I hit another roadblock. I was not able to build the app. The build process errored halfway through, with the following message:
 
 ```
 SocketError: Failed to open TCP connection to rubygems.org:443 (Hostname not known: rubygems.org) (https://rubygems.org/specs.4.8.gz)
 ```
 
-My mind immediately thought it was the same issue as GitHub: lack of IPv6 support. However, I was able to ping `rubygems.org` from the server, so I eliminated that possibility. I went online and found out the problem was that Docker does not enable IPv6 by default.
+My mind immediately thought it was the same issue as GitHub: lack of IPv6 support. However, I was able to ping `rubygems.org` from the server, so I eliminated that possibility.
+
+This is where I ran into an important distinction: the host server's network is not the same as the network inside a Docker container. My application build wasn't running on the host directly; it was running inside an isolated container. By default, Docker doesn't enable IPv6 on its internal networks. So, while my server could see the wider IPv6 internet, the build container was trapped in an IPv4-only world. Any attempt to reach an IPv6 address from within it was doomed to fail.
 
 I had to configure the Docker daemon to support IPv6 by editing `/etc/docker/daemon.json`. This file might not exist by default, so you may need to create it. Since I was allocated a /64 block of IPv6 addresses, I used a smaller /80 subnet for Docker to avoid conflicts with host networking:
 
@@ -155,7 +159,7 @@ Then I restarted Docker:
 $ sudo systemctl restart docker
 ```
 
-For Dokku apps to work with IPv6, I needed to configure the app to bind to all interfaces instead of just localhost:
+For Dokku apps to work with IPv6, I needed to configure the app to bind to all interfaces instead of just localhost. This setting ensures the app listens on `[::]:PORT` (all IPv6 interfaces) rather than just `127.0.0.1:PORT` (IPv4 localhost only), which is essential for IPv6-only servers.
 
 ```bash
 $ dokku network:set my-app bind-all-interfaces true
@@ -167,9 +171,7 @@ Then rebuild the app to apply the network changes:
 $ dokku ps:rebuild my-app
 ```
 
-That's it! The `bind-all-interfaces` setting ensures the app listens on `[::]:PORT` (all IPv6 interfaces) rather than just `127.0.0.1:PORT` (IPv4 localhost only), which is essential for IPv6-only servers.
-
-My app was now running on IPv6. I was able to access it from my local machine and from the internet. The only thing remaining was to make it accessible over HTTPS. Dokku provides a plugin to get a certificate automatically using [Let's Encrypt](https://letsencrypt.org/). Even though I still had to use the `gh-v6.com` proxy to install it, their validation process worked perfectly over IPv6:
+That's it! The only thing remaining was to make it accessible over HTTPS. Dokku provides a plugin to get a certificate automatically using [Let's Encrypt](https://letsencrypt.org/). Even though I still had to use the `gh-v6.com` proxy to install it, their validation process worked perfectly over IPv6:
 
 ```bash
 $ sudo dokku plugin:install https://gh-v6.com/dokku/dokku-letsencrypt/archive/refs/tags/0.22.0.tar.gz --name letsencrypt
@@ -187,3 +189,5 @@ I was done! I was able to access my app over HTTPS, both locally and from the in
 When I started this project, my main goal was to escape the limitations and high costs of commercial PaaS platforms. The IPv6-only server was initially just a way to save a few cents, but this journey revealed a much bigger win. It turns out, you don't have to choose between a polished, `git push`-to-deploy workflow and the freedom of your own hardware. By pairing a tool like Dokku with an affordable VPS, you can have both.
 
 The final piece of this setup, and what makes it so practical, is using Cloudflare as a proxy. This gives you the best of both worlds. My server gets to be lean and modern, running only on IPv6—which means a simpler configuration and a smaller attack surface. At the same time, anyone on the internet can access my site because Cloudflare handles the messy business of translating legacy IPv4 traffic. It’s a clean, secure backend with universal access, and a powerful blueprint for any modern web application.
+
+<br />
