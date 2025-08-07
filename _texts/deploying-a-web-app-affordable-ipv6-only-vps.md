@@ -1,6 +1,6 @@
 ---
 layout: narrative
-title: "Deploying a Web App on an IPv6-Only Server"
+title: "Deploying a Web App on an Affordable IPv6-Only VPS"
 author: Emilio Mendoza
 editor: Emilio Mendoza
 publication-date: 2025
@@ -15,23 +15,21 @@ toc:
 ---
 
 ## Intro
-Recently, I was looking for a way to deploy a personal project. 
+Recently, I needed a home for a new personal project. While I love the simplicity of [GitHub Pages](https://pages.github.com/) – where this blog lives – a dynamic Rails application requires a bit more firepower.
 
-You're reading this blog on [GitHub Pages](https://pages.github.com/), and I love its simplicity and ease of use. But since it's a Rails app, I had to look for something a bit more beefy.
+A PaaS was the obvious starting point. [Heroku](https://www.heroku.com/) was the platform I knew best, but my professional experience migrating a team away from it due to cost and stability issues made me hesitant to use it personally. Instead, I decided this was the perfect opportunity to see what the modern PaaS landscape had to offer.
 
-My first instinct was to use a PaaS platform — we were in the process of moving away from [Heroku](https://www.heroku.com/) at work and I decided to check the new crop of offerings that have surged in the last few years.
-
-To be fair, I could have stuck with Heroku; after all I was fairly familiar with it given my experience at work. But at the same time, we were not satisfied with pricing and stability, so I decided to look for alternatives.
-
-First, I tried [Render](https://render.com). It was pretty easy to get my app up and running on their basic plan, but as soon as I tried to load my initial dataset the import process repeatedly failed, hitting memory limits.
+My first stop was [Render](https://render.com). It was pretty easy to get my app up and running on their basic plan, but as soon as I tried to load my initial dataset the import process repeatedly failed, hitting memory limits.
 
 The obvious path forward was to upgrade, but I was already questioning the value. For $27/month, my app had just 512MB of RAM, with another 1GB for the database. This wasn't nearly enough, yet the dataset itself was tiny: a year's worth of data (~400,000 rows) is only about 150MB in an uncompressed CSV. It seemed absurd to pay more for a platform that couldn't handle such a small initial load, so I decided to look elsewhere.
 
-I realized that the PaaS platforms were not a good fit for a hobby project like mine. I needed a solution that was more flexible and cost-effective, so I started to look into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/), or [Hetzner](https://www.hetzner.com/). The trade-off was that I would have to manage the server myself, but this was something I was willing to do.
+This wasn't just a Render-specific issue; it was a fundamental problem with the PaaS model for a resource-hungry hobby project. A quick survey of other providers confirmed this. They all charge a premium for the convenience of a managed platform, with RAM and CPU being the most expensive, metered resources. It was clear that simply switching to another PaaS would lead to the same dead end: paying too much for too little.
 
-After doing some research and shopping around, I ended up with a [CAX21](https://www.hetzner.com/cloud) from Hetzner. I'd get 4 vCPUs, 8GB of RAM and 80GB of NVMe storage for €6.49/month, which is a pretty good deal, way better than what I was paying for a PaaS platform.
+That's when I realized I needed to trade convenience for control and started looking into VPS providers like [OVH](https://www.ovh.com/us/vps/), [Vultr](https://www.vultr.com/), or [Hetzner](https://www.hetzner.com/). The deal was simple: I would have to manage the server myself, but in return, I'd get far more raw power for my money. It was a trade-off I was happy to make.
 
-The server was an Ampere Altra arm64 machine. I decided to go with it versus a similarly priced Intel machine after looking at benchmarks online and seeing that the Altra was somewhat faster. When we migrated our main database at work from Heroku to AWS we went with their ARM machines as well and we'd been happy with the performance and the cost savings, so I figured it was a good choice. My local development machine has an Apple M4 ARM chip, so I was confident that all of this project's dependencies had support for this instruction set.
+I ultimately chose a [CAX21](https://www.hetzner.com/cloud) from Hetzner, which offered an incredible amount of power for the price: 4 vCPUs, 8GB of RAM, and 80GB of NVMe storage for just €6.49/month.
+
+This specific server came with an Ampere Altra processor, which brought up a key decision: should I go with ARM or a similarly-priced Intel machine? I opted for ARM for a few reasons. My professional experience was positive – we had successfully migrated our main database at work to AWS's ARM-based Graviton instances with great results. My personal setup was also a factor; developing on an Apple M4 Mac meant I was already confident that every dependency for this project was ARM-compatible. With online benchmarks giving the Altra a performance edge anyway, the decision felt solid.
 
 While configuring the server, Hetzner offered a €0.50/month rebate if I didn't want a primary IPv4 address. It seemed like a no-brainer: besides the small discount, it felt like a forward-thinking choice in the face of [IPv4 exhaustion](https://en.wikipedia.org/wiki/IPv4_address_exhaustion). 
 
@@ -115,17 +113,25 @@ $ dokku postgres:create my-app-database
 $ dokku postgres:link my-app-database my-app
 ```
 
+With the application and database now provisioned on the server, I could switch back to my local machine. To make remote management easier, Dokku also provides a client that can be installed locally. On macOS, it's a simple Homebrew command:
+
+```bash
+$ brew install dokku/repo/dokku
+```
+
+This client allows you to run commands against your server over SSH, providing a seamless CLI experience for management tasks - just like you would with the Heroku CLI or any other major PaaS.
+
 With a `Dockerfile` and a `Procfile` in place, I was ready to deploy. Dokku keeps the simple `git push` workflow popularized by Heroku, so after setting up a git remote, I could deploy my app with a single command:
 
 ```bash
-cd my-app
-git remote add dokku dokku@example.com:my-app
-git push dokku main
+$ cd my-app
+$ git remote add dokku dokku@example.com:my-app
+$ git push dokku main
 ```
 
 Here, `example.com` should be the domain you pointed to your server's IPv6 address with an AAAA record.
 
-However, this is where I hit another roadblock. I was not able to build the app. I was getting the following error when downloading a gem:
+However, this is where I hit another roadblock. I was not able to build the app. The build process stalled halfway through, with the following error when downloading a gem:
 
 ```
 SocketError: Failed to open TCP connection to rubygems.org:443 (Hostname not known: rubygems.org) (https://rubygems.org/specs.4.8.gz)
@@ -163,7 +169,7 @@ $ dokku ps:rebuild my-app
 
 That's it! The `bind-all-interfaces` setting ensures the app listens on `[::]:PORT` (all IPv6 interfaces) rather than just `127.0.0.1:PORT` (IPv4 localhost only), which is essential for IPv6-only servers.
 
-My app was now running on IPv6. I was able to access it from my local machine and from the internet. I wanted to enable SSL, and Dokku provides a plugin to get a certificate automatically using [Let's Encrypt](https://letsencrypt.org/). Luckily, their validation process worked perfectly over IPv6, but I still had to use the proxy to install the plugin:
+My app was now running on IPv6. I was able to access it from my local machine and from the internet. The only thing remaining was to make it accessible over HTTPS. Dokku provides a plugin to get a certificate automatically using [Let's Encrypt](https://letsencrypt.org/). Even though I still had to use the `gh-v6.com` proxy to install it, their validation process worked perfectly over IPv6:
 
 ```bash
 $ sudo dokku plugin:install https://gh-v6.com/dokku/dokku-letsencrypt/archive/refs/tags/0.22.0.tar.gz --name letsencrypt
@@ -172,22 +178,12 @@ $ dokku letsencrypt:set my-app email email@example.com
 $ dokku letsencrypt:enable my-app
 ```
 
-I was done! I was able to access my app over HTTPS, both from my local machine and from the internet.
+I was done! I was able to access my app over HTTPS, both locally and from the internet.
 
 <br />
 
 ## Conclusion
 
-So, was saving €0.50 a month by going IPv6-only worth the trouble? Absolutely. While the journey wasn't as straightforward as I'd initially hoped, it highlights that the internet is in a transition period. The core IPv6 technology is solid, but tools like GitHub and Docker still require manual configuration or workarounds to function in an IPv6-only world.
+When I started this project, my main goal was to escape the limitations and high costs of commercial PaaS platforms. The IPv6-only server was initially just a way to save a few cents, but this journey revealed a much bigger win. It turns out, you don't have to choose between a polished, `git push`-to-deploy workflow and the freedom of your own hardware. By pairing a tool like Dokku with an affordable VPS, you can have both.
 
-The key challenges I faced were:
-1.  Fixing my own local network's lack of IPv6 support.
-2.  Using a proxy to pull Dokku plugins from GitHub.
-3.  Manually enabling IPv6 in Docker's configuration.
-
-
-Despite these hurdles, I now have a cost-effective, high-performance, and future-proof platform for my projects. If you're considering making the jump, I'd say go for it. The challenges are surmountable, and by navigating them, you'll be a little bit ahead of the curve.
-
-One final thought worth mentioning is that I proxy this site through Cloudflare. Their network makes my site accessible to users on older, IPv4-only networks by translating their requests to IPv6 before they reach my server.
-
-A fair question might be: if Cloudflare provides IPv4 access anyway, was the effort worthwhile? I would say yes. Beyond the initial cost savings, this setup simplifies my server's configuration and reduces its attack surface — there is no public IPv4 address to manage, firewall, or secure. It's the best of both worlds: universal access for all users, with a simpler and more secure IPv6-only origin.
+The final piece of this setup, and what makes it so practical, is using Cloudflare as a proxy. This gives you the best of both worlds. My server gets to be lean and modern, running only on IPv6—which means a simpler configuration and a smaller attack surface. At the same time, anyone on the internet can access my site because Cloudflare handles the messy business of translating legacy IPv4 traffic. It’s a clean, secure backend with universal access, and a powerful blueprint for any modern web application.
