@@ -93,6 +93,25 @@ body {
   }
 }
 
+/* Resume layout: wider container only for resume pages */
+@media (min-width: 72rem) {
+  body.layout-resume .container.content,
+  body.layout-resume main.container {
+    max-width: 56rem;
+  }
+}
+
+/* Resume layout: add a bit more space between list items */
+body.layout-resume #main ul li + li,
+body.layout-resume #main ol li + li {
+  margin-top: .4rem;
+}
+
+/* Resume layout: add a bit more space before h3 headings */
+body.layout-resume #main h3 {
+  margin-top: 2rem;
+}
+
 /* Links */
 a, .text-title a {
   color: $link-color;

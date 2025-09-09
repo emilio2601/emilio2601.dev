@@ -5,9 +5,15 @@ title: "Emilio Mendoza"
 <div class="introduction">
   <h1>hi.</h1>
 
-<p>
-  this is my website. it's a work in progress.
-</p>
+  <p>
+    i'm an experienced full-stack software engineer (currently at <a href="https://wefunder.com">wefunder</a>) with a strong background in financial technology and scalable system architecture. 
+  </p>
+  <p>
+    i have a proven track record of leading teams, optimizing costs, and building user-facing products that drive meaningful business results. 
+  </p>
+  <p>
+    when i'm not helping make something people want, i'm nerding out on aviation, cities, and mass transit.
+  </p>
 </div>
 
 <hr>
@@ -16,12 +22,13 @@ title: "Emilio Mendoza"
   <h2>articles</h2>
   <ul class="texts">
   {% for item in site.texts %}
-
+    {% unless item.permalink == "/resume/" or item.url == "/resume/" or item.layout == "resume" %}
     <li class="text-title">
       <a href="{{ site.baseurl }}{{ item.url }}">
         {{ item.title }}
       </a>
     </li>
+    {% endunless %}
   {% endfor %}
   </ul>
 </div>
@@ -46,13 +53,13 @@ title: "Emilio Mendoza"
   <h2>about me</h2>
   <ul class="texts">
     <li class="text-title">
-      <a href="/resume">
-        resume (web)
+      <a href="/assets/Resume%20-%20Emilio%20Mendoza.pdf">
+        resume (pdf)
       </a>
     </li>
     <li class="text-title">
-      <a href="/resume.pdf">
-        resume (pdf)
+      <a href="/resume">
+        resume (web)
       </a>
     </li>
     <li class="text-title">
@@ -72,7 +79,7 @@ title: "Emilio Mendoza"
   <h2>contact</h2>
   <ul class="texts">
     <li class="text-title">
-      <a href="mailto:me@emilio2601.dev">
+      <a href="mailto:emilio2601@gmail.com">
         email
       </a>
     </li>
