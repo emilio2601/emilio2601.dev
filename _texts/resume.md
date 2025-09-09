@@ -2,6 +2,12 @@
 layout: resume
 title: Resume - Emilio Mendoza
 permalink: /resume/
+toc:
+- Experience
+- Projects
+- Skills
+- Education
+- Certifications and Licenses
 ---
 
 # Experience
