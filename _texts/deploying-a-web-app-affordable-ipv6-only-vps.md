@@ -3,7 +3,7 @@ layout: narrative
 title: "Deploying a Web App on an Affordable IPv6-Only VPS"
 author: Emilio Mendoza
 editor: Emilio Mendoza
-publication-date: 2025
+publication-date: 2025-08-06
 toc:
 - Intro
 - Connecting to the server
