@@ -3,15 +3,15 @@
 # Setup
 title:               Emilio Mendoza
 tagline:             ''
-description:         'Ed is a Jekyll theme designed for textual editors based on minimal computing principles, and focused on legibility and flexibility.'
+description:         'Hi, I''m Emilio Mendoza, welcome to my personal website.'
 url:                 'http://minicomp.github.io'
 baseurl:             ''
 
 # About/contact
 author:
-  name:              Alex Gil
-  url:               https://twitter.com/elotroalex
-  email:             colibri.alex@gmail.com
+  name:              Emilio Mendoza
+  url:               https://twitter.com/emilio2601_
+  email:             emilio2601@gmail.com
 
 # Color scheme. Options: red, orange, magenta, cyan, blue, brown
 color-scheme:
