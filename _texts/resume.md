@@ -14,7 +14,7 @@ toc:
 
 ### **Software Engineer (Product & Infrastructure)**
 *Wefunder (YC S13) | New York, NY | Dec 2023 -- Present*
-- Led a 3 person team migrating from Heroku to AWS, reducing infrastructure costs 50% with new Kubernetes-based architecture; executed database and application cutover with minimal downtime
+- Architected production infrastructure migration from Heroku to AWS, reducing costs 50% with new Kubernetes-based architecture; led 3-person team executing database and application cutover with no downtime
 - Modernized investment checkout flow from legacy AngularJS to React, implementing Stripe APIs for Apple Pay/3DS authentication and Plaid for automated bank verification, achieving 39% conversion improvement
 - Developed investor portfolio page with investment return calculations, powered by custom valuation engine for multiple investment structures with admin tooling for event tracking and data validation across fragmented sources
 - Headed 3-engineer team overhauling legacy social feed system, adding Twitter-style posts with engagement-based ranking algorithm and reducing worst-case page load times from 10+ secs to 300 ms
@@ -25,6 +25,7 @@ toc:
 - Built ownership tracking system for securities transfers, designing double-entry ledger with constraints preventing negative balances and enforcing transaction integrity, eliminating compliance risk for 65+ investment vehicles
 - Built automated tax document distribution system processing ~45k tax forms annually, reducing per-company processing time from 1 day to 1 hr, eliminating security risks from unencrypted storage and document mismatching
 - Led two separate KYC integrations over 2 years, first implementing Onfido for EU market expansion then migrating to Footprint for encrypted data vaulting and reduced compliance overhead
+- Modernized payment infrastructure from legacy Stripe Charges API to Payment Intents, reducing payment failures and enabling international expansion; executed zero-downtime migration of 300k+ credit cards
 - Automated payment reconciliation and banking integrations for ACH, wire, and card payments, eliminating hours of daily manual operations work while accelerating payment processing
 
 ### **Software Engineer Intern**
@@ -42,16 +43,16 @@ toc:
 - Deployed on cost-optimized IPv6-only VPS with sub-second response times, reducing hosting costs by 90%
 
 
-### **[apt-dashboard](https://github.com/emilio2601/apt-dashboard)** | React, Node.js, Docker
+### **[apt-dashboard](https://apt.emilio2601.dev)** | React, Node.js, Docker
 *June 2022 -- Present*
 - Built real-time transit board integrating GTFS feeds from 5+ transit agencies including MTA, BART and Muni
 - Implemented complex NYC subway logic for express/local service, ETAs, varying terminals, and service alerts
 
 
-### **FRC Team 6348 - Lead Software Engineer** | C, Python
-*Aug 2016 -- June 2019*
-- Led 3-person controls team; implemented PID that improved angular error from 2.0° to 0.02° (-99%)
-- Built H.264 video streaming with adaptive quality control and UDP latency estimation; reduced glass-to-glass latency from ~1000 ms to 76 ms and increased resolution to 720p
+### **FRC Team 6348 - Team Lead (Engineering & Outreach)** | C, Python
+*Aug 2016 -- May 2020*
+- Led presentations to judges and community outreach initiatives; earned Chairman's Award (highest team honor)
+- Directed software development for competition robot, specializing in autonomous control and vision systems
 
 <br />
 
@@ -72,5 +73,6 @@ toc:
 <br />
 
 # Certifications and Licenses
-
-- FINRA SIE, Series 99 • FCC Amateur Radio (KE2DDL) • FAA Student Pilot (Cessna 152/172)
+- FINRA SIE, Series 99
+- FCC Amateur Radio (KE2DDL)
+- FAA Student Pilot (Cessna 152/172)
