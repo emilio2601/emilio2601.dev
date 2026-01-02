@@ -4,6 +4,21 @@
   <!-- Canonical link to help search engines -->
   <link rel="canonical" href="{{ resource_url }}" />
 
+  <!-- Markdown version for LLM consumption -->
+  {% unless page.no_markdown_export %}
+  {% assign md_url = page.url %}
+  {% if md_url == "/" %}
+    {% assign md_url = "/index" %}
+  {% else %}
+    {% assign url_size = md_url | size | minus: 1 %}
+    {% assign last_char = md_url | slice: url_size %}
+    {% if last_char == "/" %}
+      {% assign md_url = md_url | slice: 0, url_size %}
+    {% endif %}
+  {% endif %}
+  <link rel="alternate" type="text/markdown" href="{{ md_url }}.md" />
+  {% endunless %}
+
   <!-- Basic meta elements -->
   <meta charset="utf-8" />
 

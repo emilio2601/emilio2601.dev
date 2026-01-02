@@ -5,6 +5,17 @@ layout: default
 <article class="narrative">
   <h1 class="text-title">{{ page.title }}</h1>
   <p class="byline">by {{ page.author }}</p>
-  <p class="publication-date">last updated: {{ page.publication-date }}</p>
+  <p class="publication-date">
+    last updated: {{ page.publication-date }}
+    {% unless page.no_markdown_export %}
+    {% assign md_url = page.url %}
+    {% assign url_size = md_url | size | minus: 1 %}
+    {% assign last_char = md_url | slice: url_size %}
+    {% if last_char == "/" %}
+      {% assign md_url = md_url | slice: 0, url_size %}
+    {% endif %}
+    <br><span style="font-style: normal;"><a href="{{ md_url }}.md">alt: markdown version</a></span>
+    {% endunless %}
+  </p>
   {{ content }}
 </article>

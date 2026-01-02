@@ -4,5 +4,14 @@ layout: default
 
 <article class="post">
   <h1 class="text-title">{{ page.title }}</h1>
+  {% unless page.no_markdown_export %}
+  {% assign md_url = page.url %}
+  {% assign url_size = md_url | size | minus: 1 %}
+  {% assign last_char = md_url | slice: url_size %}
+  {% if last_char == "/" %}
+    {% assign md_url = md_url | slice: 0, url_size %}
+  {% endif %}
+  <p class="publication-date" style="font-style: normal;"><a href="{{ md_url }}.md">alt: markdown version</a></p>
+  {% endunless %}
   {{ content }}
 </article>
