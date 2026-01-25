@@ -59,8 +59,8 @@ toc:
 # Skills
 
 - **Backend**: Ruby, Rails, Node.js, Python, Go, SQL, PL/pgSQL, Redis, PostgreSQL, Docker, Kubernetes (EKS)
-- **Frontend**: React, JavaScript/TypeScript, HTML/CSS, Tailwind, Figma
-- **Cloud/DevOps**: AWS (RDS, EC2, S3, ElastiCache), Cloudflare, GitHub Actions, Sentry
+- **Frontend**: React, JavaScript/TypeScript, HTML/CSS, Tailwind
+- **Tools & Infrastructure**: Claude Code, AWS (RDS, EC2, S3, ElastiCache), Cloudflare, GitHub Actions, Sentry, Figma
 
 <br />
 
