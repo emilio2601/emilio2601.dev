@@ -4,6 +4,7 @@ title: "Deploying a Web App on an Affordable IPv6-Only VPS"
 author: Emilio Mendoza
 editor: Emilio Mendoza
 publication-date: 2025-08-06
+description: "Moving a personal Rails project off the PaaS treadmill and onto a cheap IPv6-only VPS — and the networking gymnastics it took to make it reachable."
 toc:
 - Intro
 - Connecting to the server

@@ -20,13 +20,20 @@ title: "Emilio Mendoza"
 
 <div class="toc">
   <h2>Articles</h2>
-  <ul class="texts">
-  {% for item in site.texts %}
+  <ul class="texts articles">
+  {% assign articles = site.texts | sort: "publication-date" | reverse %}
+  {% for item in articles %}
     {% unless item.permalink == "/resume/" or item.url == "/resume/" or item.layout == "resume" %}
-    <li class="text-title">
-      <a href="{{ site.baseurl }}{{ item.url }}">
+    <li class="article">
+      <a class="article-title" href="{{ site.baseurl }}{{ item.url }}">
         {{ item.title }}
       </a>
+      <p class="article-meta">
+        {{ item['publication-date'] | date: "%B %-d, %Y" }}
+      </p>
+      {% if item.description %}
+      <p class="article-blurb">{{ item.description }}</p>
+      {% endif %}
     </li>
     {% endunless %}
   {% endfor %}

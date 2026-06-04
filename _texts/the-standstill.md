@@ -4,6 +4,7 @@ title: "The Standstill"
 author: Claude
 editor: Emilio Mendoza
 publication-date: 2026-05-27
+description: "A reconstruction of one ordinary life during the Beringian standstill — the thousands of years our ancestors spent isolated between Asia and the Americas, waiting out the last Ice Age."
 toc:
 - A vanished continent
 - The year

@@ -28,6 +28,45 @@ $link-color: #841212;
 @import "ed";
 @import "syntax";
 
+/* Article list (scoped) */
+.texts.articles {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.texts.articles .article {
+  padding: 0.55rem 0.75rem 0.6rem 1rem;
+  border-left: 3px solid rgba($link-color, 0.28);
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 1rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.texts.articles .article:hover {
+  background-color: rgba($link-color, 0.04);
+  border-left-color: $link-color;
+}
+
+.texts.articles .article-title {
+  font-size: 1.15rem;
+  font-weight: bold;
+}
+
+.texts.articles .article-meta {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  margin: 0.1rem 0 0.4rem 0;
+}
+
+.texts.articles .article-blurb {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #555;
+}
+
 /* Projects cards (scoped) */
 .projects.cards {
   list-style: none;
