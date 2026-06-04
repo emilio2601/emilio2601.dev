@@ -67,6 +67,99 @@ $link-color: #841212;
   color: #555;
 }
 
+/* Elsewhere — about/contact links (scoped) */
+.elsewhere {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.elsewhere li {
+  margin: 0;
+  min-width: 0;
+}
+
+.elsewhere a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-bottom: 3px;
+  color: #5c5c5c;
+  font-size: 1rem;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+}
+
+.elsewhere a svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.elsewhere a svg.icon-globe {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.elsewhere a .meta {
+  color: #a09a9a;
+  font-size: 0.78rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+.elsewhere a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.elsewhere a:hover,
+.elsewhere a:focus {
+  color: $link-color;
+  text-decoration: none;
+}
+
+.elsewhere a:hover .meta,
+.elsewhere a:focus .meta {
+  color: $link-color;
+}
+
+.elsewhere a:hover::after,
+.elsewhere a:focus::after {
+  transform: scaleX(1);
+}
+
+.elsewhere a:hover svg,
+.elsewhere a:focus svg {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .elsewhere a svg,
+  .elsewhere a::after {
+    transition: none;
+  }
+}
+
+@media (min-width: 34em) {
+  .elsewhere {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Projects cards (scoped) */
 .projects.cards {
   list-style: none;
@@ -103,6 +196,19 @@ $link-color: #841212;
   color: #666;
   margin-top: 1rem;
   margin-bottom: 0;
+}
+
+.projects.cards .card .project-meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.projects.cards .card .project-meta svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  transform: translateY(-1.5px);
 }
 
 @media (min-width: 48em) {
