@@ -27,6 +27,7 @@ module Jekyll
 
       docs.each do |post|
         next if post.data['no_markdown_export']
+        next unless post.respond_to?(:output_ext) && post.output_ext == '.html'
 
         post_url = post.url.to_s.chomp('/')
 

@@ -16,12 +16,17 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Opt JS actions into Node 24 (silences the Node 20 deprecation warning
+# from actions still bundling the older runtime)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
