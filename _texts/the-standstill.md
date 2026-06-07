@@ -28,7 +28,7 @@ So pick a moment in the middle of that long pause, say 22,000 years ago, and ask
 
 What follows is a reconstruction. We have no skeletons from this exact population, much of their world is now underwater, and a great deal is inferred from neighboring sites and from foragers who lived in comparable places much later. But it's a disciplined guess, and it goes like this.
 
-<p class="dinkus">·</p>
+<p class="dinkus">···</p>
 
 ## The year
 {: style="display:block;height:0;margin:0;overflow:hidden;"}
@@ -47,14 +47,14 @@ Autumn is the season everything else is for. This is when you lay in the winter 
 
 Early winter closes the loop. The cold settles, the light shrinks to a few hours of twilight in the far north, the sea ice reforms, and the hunting gets harder but doesn't stop — seals at their breathing holes, large game on the move. And as the productive work thins out, the social and spiritual life thickens. This is the storytelling season, the ritual season, the time when knowledge passes between generations and marriages are arranged, disputes settled, alliances made. If your band gathers with its neighbors, it happens now, because winter is when everyone is concentrated rather than scattered.
 
-<p class="dinkus">·</p>
+<p class="dinkus">···</p>
 
 ## A day
 {: style="display:block;height:0;margin:0;overflow:hidden;"}
 
 A day inside all this is simpler than the year. You wake when there's light enough, or before it if the task demands. You eat — yesterday's food, or a fresh kill if there is one; the first real meal might not come until midday or later, depending on how the hunt went. The work is divided by sex and age but not rigidly: men do most of the big-game hunting, women most of the gathering, processing, child care, and short-range trapping, and both sexes work clothing and tools and shelter. By eight or ten a child does everything; by twelve or fourteen they may be on serious hunts. None of this is "work" as against "life" — you are simply producing, processing, and mending without pause, and the labor is highly skilled. Knapping a good blade takes years to learn. Sewing a parka takes patience, fine hands, and a deep feel for the materials. Tanning a hide is days of hard physical work. And the social world happens *inside* the labor: people talk while they sew, sing while they walk, tell stories while they butcher. In the evening comes the main meal, eaten together and shared according to custom rather than appetite; often a hunter doesn't eat his own kill, because the meat is distributed by social rule. Then more stories, songs, ritual, sleep — six to fifteen of you breathing in the dark of one shared house.
 
-<p class="dinkus">·</p>
+<p class="dinkus">···</p>
 
 ## What you ate
 {: style="display:block;height:0;margin:0;overflow:hidden;"}
@@ -63,7 +63,7 @@ What you eat would alarm a modern nutritionist. Something like half to four-fift
 
 The body this produces is, by our standards, an athlete's. You're lean and muscular, carrying fat by autumn and shedding it by spring. Men run maybe five-two to five-eight, women four-ten to five-four. You carry a genetic variant called EDAR that gives you thick straight hair, shovel-shaped incisors, and dense sweat glands — and if one current hypothesis holds, it also shaped your mother's milk to carry more fat, which may be part of why you survived your first winters at all. Your skin is darker than your deep-ancestors' but lighter than the tropics would make it, a compromise between shielding from UV and making vitamin D under a low sun; your eyes are almost certainly dark, since the variants for pale ones haven't reached this far. What threatens you is trauma from the hunt, cold injury, the bad year's starvation, childbirth, the parasites and chronic infections of close quarters. What doesn't threaten you is the epidemic disease of crowded farming towns, which won't exist for millennia, or tooth decay, because your food has essentially no fermentable sugar — your teeth wear down to nubs from coarse food and from being used as tools, but they don't rot.
 
-<p class="dinkus">·</p>
+<p class="dinkus">···</p>
 
 ## A life
 {: style="display:block;height:0;margin:0;overflow:hidden;"}
@@ -72,7 +72,7 @@ A whole life laid end to end is harder to draw, but it has a shape. Infancy is t
 
 Then comes the long productive core — your late teens through your forties, spent hunting and gathering and raising children and gathering the ecological and social knowledge that is the only library your people have. A woman might be pregnant four to eight times and see two to four of those children reach adulthood. And here is something most people get wrong about prehistoric life: the famous "life expectancy of thirty" is an arithmetic shadow cast by all those infant deaths. Survive to fifteen and you could very reasonably expect another thirty-five to fifty years. Elders existed. The grandparent is one of our species' quiet innovations, and the old were how the band survived: the ones who remembered where the famine foods grew, when the last killing winter came, what to do the year the salmon failed. Old age might begin around forty-five or fifty. You can do less of the heavy work now, but you've become the band's memory — minding grandchildren, teaching, judging disputes, tending the rituals, until some final illness or accident ends it. Dying in your sixties or seventies would surprise no one; your eighties would be remarkable but not impossible. When you go, the whole band buries you — pits, ochre, grave goods, the elaborate mortuary care the later Siberian sites preserve — and you live on, for a while, in the stories the survivors tell.
 
-<p class="dinkus">·</p>
+<p class="dinkus">···</p>
 
 ## From the inside
 {: style="display:block;height:0;margin:0;overflow:hidden;"}
